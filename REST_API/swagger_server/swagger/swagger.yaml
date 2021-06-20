@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: ECommerce API
+  version: 0.1.1
+servers:
+- url: http://api.example.com/v1
+paths:
+  /products:
+    get:
+      operationId: products_get
+      parameters:
+      - name: offset
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: The numbers of items to return.
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          default: 20
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    ProductList:
+      properties:
+        total:
+          type: integer
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+      example:
+        total: 2
+        products:
+        - quantity: 1
+          name: name1
+          id: 6
+        - quantity: 1
+          name: name2
+          id: 7
+    Product:
+      required:
+      - id
+      - name
+      - quantity
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        quantity:
+          type: integer
+      example:
+        quantity: 1
+        name: name
+        id: 6
+
