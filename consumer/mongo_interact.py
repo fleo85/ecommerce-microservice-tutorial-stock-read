@@ -9,8 +9,18 @@ def insert_into(host, product):
     db = client.ecommerce
         
     try:
-        db.products.insert_one(product)
-        print(" [x] Product added.")
+        prod_id = product["id"]
+        prod_in_db = db.products.find_one({"id": prod_id})
+        if prod_in_db is not None:
+            if product["quantita"] == 0:
+                db.products.delete_one({"id": prod_id})
+                print(" [x] Product removed.")
+            else:
+                db.products.update_one({"id": prod_id}, {"$set": product})
+                print(" [x] Product updated.")
+        else:
+            db.products.insert_one(product)
+            print(" [x] Product added.")
         pprint.pprint(product)
         
     except pymongo.errors.DuplicateKeyError:
